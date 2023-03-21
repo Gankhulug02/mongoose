@@ -16,7 +16,10 @@ const UserSchema = new mongoose.Schema({
     ENUM: ["User", "Admin"],
     default: "User",
   },
-  phoneNumber: String,
+  phoneNumber: {
+    type: String,
+    default: "60020202",
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

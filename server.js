@@ -48,6 +48,7 @@ app.use("/travels", travelRoutes);
 app.get("/", (req, res) => {
   res.json({ message: "HELLO" });
 });
+
 app.post("/upload", upload.single("image"), (req, res) => {
   console.log("req", req.file);
   res.status(200).json({
