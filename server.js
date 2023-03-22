@@ -1,17 +1,20 @@
 const express = require("express");
+const cors = require("cors");
 const dotenv = require("dotenv");
+dotenv.config();
 const multer = require("multer");
 const path = require("path");
 const colors = require("colors");
 
 const { connectDB } = require("./config/mongoDB");
-const logger = require("./logger/logger");
+const logger = require("./middlewares/logger");
+const upload = require("./middlewares/upload");
+const cloudinary = require("./utils/cloudinary");
+const error = require("./middlewares/error");
 
 const userRoutes = require("./Routes/user");
 const categoryRoutes = require("./Routes/category");
 const travelRoutes = require("./Routes/travel");
-
-dotenv.config();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,7 +29,7 @@ const storage = multer.diskStorage({
     cb(null, `${fileName}${fileExt}`);
   },
 });
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 const PORT = process.env.PORT;
 const dbUrl = process.env.DATABASE_URI;
@@ -35,7 +38,7 @@ const dbUrl = process.env.DATABASE_URI;
 const app = express();
 
 //Middlewares
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 app.use(logger);
 app.use("/uploads", express.static("uploads"));
@@ -49,13 +52,19 @@ app.get("/", (req, res) => {
   res.json({ message: "HELLO" });
 });
 
-app.post("/upload", upload.single("image"), (req, res) => {
-  console.log("req", req.file);
+app.post("/upload", upload.single("image"), async (req, res) => {
+  console.log("REQ:", req.file);
+  const result = await cloudinary.uploader.upload(req.file.path);
+  // console.log("CLOUD", result);
+
   res.status(200).json({
-    message: "Amjilttai upload hiile",
-    imgUrl: `${req.protocol}://${req.hostname}:${PORT}/${req.file.path}`,
+    message: "Амжилттай хадгаллаа.",
+    imgUrl: result.secure_url,
   });
 });
+
+//ERROR
+app.use(error);
 
 connectDB(dbUrl);
 

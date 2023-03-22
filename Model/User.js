@@ -9,8 +9,12 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
+    required: [true, "Хэрэглэгчийн emailийг заавал бөглөнө үү!!!"],
   },
-  password: String,
+  password: {
+    type: String,
+    required: [true, "Хэрэглэгчийн нэрийг заавал бөглөнө үү!!!"],
+  },
   role: {
     type: String,
     ENUM: ["User", "Admin"],
