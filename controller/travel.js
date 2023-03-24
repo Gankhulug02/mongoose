@@ -1,49 +1,40 @@
 const Travel = require("../Model/travel");
 
-const getTravels = async (req, res) => {
+const getTravels = async (req, res, next) => {
   try {
-    const travels = await Travel.find({});
-    res.status(201).json({ message: "Succesful", travels });
-  } catch (error) {
-    res.status(400).json({
-      message: "Travel iin medeeleliig avahad aldaa garlaa",
-      error: error.message,
-    });
+    const travels = await Travel.find().populate("category");
+
+    res.status(201).json({ message: "Амжилттай аялалууд олдлоо.", travels });
+  } catch (err) {
+    next(err);
   }
 };
 
-const createTravel = async (req, res) => {
+const createTravel = async (req, res, next) => {
   const {
     title,
-    travelDetail,
+    description,
     travelImg,
     travelPrice,
-    travelLocation,
     travelDay,
+    travelLocation,
+    category,
   } = req.body;
-  if (
-    !title ||
-    !travelDetail ||
-    !travelImg ||
-    !travelPrice ||
-    !travelLocation ||
-    !travelDay
-  ) {
-    res.status(400).json({ message: "Ali neg ni hooson baina" });
-    return;
-  }
+
   try {
     const travel = await Travel.create({
       title,
-      travelDetail,
+      description,
       travelImg,
       travelPrice,
-      travelLocation,
       travelDay,
+      travelLocation,
+      category,
     });
-    res.status(201).json({ message: "Succesful", travel });
-  } catch (error) {
-    res.status(400).json({ message: "ERROR", error: error.message });
+
+    res.status(201).json({ message: "Амжилттай аялал үүсгэлээ.", travel });
+  } catch (err) {
+    next(err);
   }
 };
 

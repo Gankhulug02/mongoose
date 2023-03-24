@@ -7,12 +7,15 @@ const {
   updateUser,
   deleteUser,
   login,
+  register,
 } = require("../controller/user");
+const checkRole = require("../utils/checkRole");
 
 const router = express.Router();
 
 router.route("/login").post(login);
-router.route("/").post(createUser).get(getUsers);
+router.route("/register").post(register);
+router.route("/").post(checkRole, createUser).get(checkRole, getUsers);
 router.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
 
 module.exports = router;

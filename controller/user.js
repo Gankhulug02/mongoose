@@ -1,4 +1,6 @@
 const User = require("../Model/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -29,6 +31,7 @@ const createUser = async (req, res, next) => {
       password,
       profileImg,
     });
+
     res.status(201).json({ message: "Амжилттай бүртгэгдлээ", user });
   } catch (err) {
     next(err);
@@ -91,10 +94,42 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.find({ email, password });
-    if (!user.length) {
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
       res.status(200).json({ message: `email or password incorrect` });
     }
+
+    const checkPass = bcrypt.compareSync(password, user.password);
+    console.log(checkPass);
+    if (!checkPass) {
+      res.status(200).json({ message: `email or password incorrect` });
+    }
+
+    const { _id, role } = user;
+
+    const token = jwt.sign({ _id, email, role }, process.env.JWT_SECRET_KEY, {
+      expiresIn: 36000,
+    });
+
+    res.status(200).json({ message: `Амжилттай нэвтэрлээ`, user, token });
+  } catch (error) {
+    next();
+  }
+};
+
+const register = async (req, res, next) => {
+  const { name, email, password, phoneNumber } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  console.log(hashedPassword);
+
+  try {
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      phoneNumber,
+    });
+
     res.status(200).json({ message: `Succesfully`, user });
   } catch (error) {
     next();
@@ -108,4 +143,5 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  register,
 };

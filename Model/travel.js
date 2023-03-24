@@ -5,7 +5,7 @@ const TravelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  travelDetail: {
+  description: {
     type: String,
     maxlength: [500, "tailbar 500 temdegtees ihgui baina"],
   },
@@ -24,8 +24,11 @@ const TravelSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+  },
 });
 
-const travel = mongoose.model("travel", TravelSchema);
-
+const travel = mongoose.model("Travel", TravelSchema);
 module.exports = travel;

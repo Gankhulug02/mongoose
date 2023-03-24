@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Хэрэглэгчийн нэрийг заавал бөглөнө үү!!!"],
+    // select: false,
+    required: [true, "Хэрэглэгчийн password ийг заавал бөглөнө үү!!!"],
   },
   role: {
     type: String,
