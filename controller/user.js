@@ -91,25 +91,31 @@ const deleteUser = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
-
+  console.log(req.body.email);
   try {
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email: req.body.email }).select(
+      "+password"
+    );
     if (!user) {
       res.status(200).json({ message: `email or password incorrect` });
     }
 
-    const checkPass = bcrypt.compareSync(password, user.password);
-    console.log(checkPass);
+    const checkPass = bcrypt.compareSync(req.body.password, user.password);
+
     if (!checkPass) {
+      console.log(asd);
       res.status(200).json({ message: `email or password incorrect` });
     }
 
-    const { _id, role } = user;
+    const { _id, name, email, role } = user;
 
-    const token = jwt.sign({ _id, email, role }, process.env.JWT_SECRET_KEY, {
-      expiresIn: 36000,
-    });
+    const token = jwt.sign(
+      { _id, name, email, role },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: 3600,
+      }
+    );
 
     res.status(200).json({ message: `Амжилттай нэвтэрлээ`, user, token });
   } catch (error) {
@@ -118,21 +124,20 @@ const login = async (req, res, next) => {
 };
 
 const register = async (req, res, next) => {
-  const { name, email, password, phoneNumber } = req.body;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  console.log(hashedPassword);
+  const { name, email, password, phone } = req.body;
 
   try {
+    const hashedPassword = bcrypt.hashSync(password, 10);
     const user = await User.create({
       name,
       email,
+      phone,
       password: hashedPassword,
-      phoneNumber,
     });
 
-    res.status(200).json({ message: `Succesfully`, user });
+    res.status(200).json({ message: `Амжилттай бүртгэгдлээ`, user });
   } catch (error) {
-    next();
+    next(error);
   }
 };
 

@@ -49,6 +49,8 @@ const getCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
+  console.log(req.body);
 
   if (!id) {
     res.status(400).json({ message: `${id}, tai category oldsongui` });
@@ -59,6 +61,7 @@ const updateCategory = async (req, res) => {
     const category = await Category.findByIdAndUpdate(id, req.body, {
       new: true,
     });
+    console.log("category".green, category);
     res.status(201).json({ message: "Succesfully updated", category });
   } catch (error) {
     res.status(400).json({ message: "ERROR", error: error.message });
