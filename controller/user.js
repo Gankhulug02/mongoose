@@ -103,7 +103,6 @@ const login = async (req, res, next) => {
     const checkPass = bcrypt.compareSync(req.body.password, user.password);
 
     if (!checkPass) {
-      console.log(asd);
       res.status(200).json({ message: `email or password incorrect` });
     }
 

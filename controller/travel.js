@@ -17,6 +17,7 @@ const createTravel = async (req, res, next) => {
     travelImg,
     travelPrice,
     travelDay,
+    travelRating,
     travelLocation,
     category,
   } = req.body;
@@ -28,6 +29,7 @@ const createTravel = async (req, res, next) => {
       travelImg,
       travelPrice,
       travelDay,
+      travelRating,
       travelLocation,
       category,
     });
